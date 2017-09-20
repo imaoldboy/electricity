@@ -2,10 +2,10 @@ var SerialPort = require("serialport");
 var readCmd1 = Buffer.from("B0C0A80101001A", "hex")
 var dataBuffer = new Array();
 var port = new SerialPort("/dev/ttyUSB0",{
-    bandrate:9600,
-    autoOpen:false,
-    stopBits:1,
-timeOut:2
+	bandrate:9600,
+	autoOpen:false,
+	stopBits:1,
+	timeOut:2
 });
 
 
@@ -15,20 +15,19 @@ function writeDC2DB(dc1,dc2){
 }
 
 function readDC(data, cmd){
-	var index = data.indexOf(cmd);
-	if(index !== -1){
-		console.log("====================includes a0 : " + data.indexOf(cmd));
-		if(data[index+2] && data[index+3]){
-			var dc1 = parseInt(data[index+2], 16);	
-			var dc2 = parseInt(data[index+3], 16);	
-			writeDC2DB(dc1, dc2);
-		}
-	}
+	//only one item in data(array)
 	for(x in data){
-		if(data[x] == 'ff')
-			console.log('Data:--------------', data[x]);
-		else
-			console.log('Data:---', data[x]);
+		console.log('Data:---', data[x]);
+	}
+
+	var index = data.toString().indexOf(cmd);
+	if(index !== -1 && data.toString().length>=14){
+		console.log("====================includes a0 : " + index);
+		var dc1 = parseInt(data.toString().substring(4,6),16);	
+		var dc2 = parseInt(data.toString().substring(6,8),16);	
+		writeDC2DB(dc1, dc2);
+	}else{
+		console.log("no a0 index found!");
 	}
 }
 
